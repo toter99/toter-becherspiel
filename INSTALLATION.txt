@@ -1,0 +1,6 @@
+toter-becherspiel – Installation
+Stand: 436c2f9 vom 2026-11-12
+
+1. Den Ordner toter-becherspiel nach resources/[toter]/ auf dem FiveM-Server kopieren.
+2. In der server.cfg eintragen:  ensure toter-becherspiel
+3. Server neu starten oder in txAdmin: refresh, dann ensure toter-becherspiel

@@ -1,0 +1,14 @@
+Item von toter-becherspiel
+
+1. Bild: becherset.png in den Bilder-Ordner des Inventars kopieren
+   (qb-inventory: html/images/, ox_inventory: web/images/, qs-inventory: dessen Bilder-Ordner).
+
+2. Item: toter-becherspiel legt es beim Start selbst an (QBCore.Functions.AddItem).
+   Meldet die Server-Konsole "Item becherset nicht angelegt", diese Zeile in
+   qb-core/shared/items.lua bei den anderen Items einfügen und den Server neu starten
+   (ox_inventory: Eintrag in data/items.lua, siehe ANSCHLUESSE.md):
+
+   becherset = { name = 'becherset', label = 'Becherset', weight = 500, type = 'item', image = 'becherset.png', unique = false, useable = true, shouldClose = true, description = 'Drei Becher, eine Kugel und eine Klapptisch-Auflage. Benutzen, um ein Becherspiel aufzustellen.' },
+
+Das Set bleibt beim Aufstellen im Inventar. Wer schon einen Tisch stehen hat, öffnet mit dem Set wieder sein Fenster.
+Verkauf oder Vergabe (Shop, Admin /giveitem) legt der Server selbst fest.

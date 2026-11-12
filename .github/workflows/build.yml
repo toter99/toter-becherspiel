@@ -1,0 +1,58 @@
+name: Build
+
+# Läuft bei jedem Push auf main (oder master) und per Hand (Actions, Build, Run workflow).
+# Gibt es den Tag zur Version aus fxmanifest.lua schon (legt der Release-Knopf der Projekt-Webseite an),
+# aber noch kein GitHub-Release dazu, wird das Release mit der fertigen ZIP erstellt.
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Bauen
+        run: |
+          dotnet build Client/Client.csproj -c Release
+          dotnet build Server/Server.csproj -c Release
+
+      - name: Paket packen
+        run: |
+          ziel=paket/toter-becherspiel
+          mkdir -p $ziel/Client/bin/Release $ziel/Server/bin/Release
+          cp fxmanifest.lua README.md LICENSE CHANGELOG.md ANSCHLUESSE.md $ziel/
+          cp Client/bin/Release/*.net.dll $ziel/Client/bin/Release/
+          cp Server/bin/Release/*.net.dll $ziel/Server/bin/Release/
+          cp -r html inventar $ziel/
+          cd paket && zip -r ../toter-becherspiel.zip toter-becherspiel
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: toter-becherspiel
+          path: toter-becherspiel.zip
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(grep -oP "^version\s+['\"]\K[^'\"]+" fxmanifest.lua)
+          tag="v$version"
+          if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+            echo "Tag $tag gibt es noch nicht, kein Release."
+            exit 0
+          fi
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "Release $tag gibt es schon."
+            exit 0
+          fi
+          gh release create "$tag" toter-becherspiel.zip --verify-tag --title "toter-becherspiel $version" --notes-file CHANGELOG.md

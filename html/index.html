@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!-- toter-becherspiel von toter · https://github.com/toter99/toter-becherspiel -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>toter-becherspiel</title>
+<link rel="stylesheet" href="toter-ui.css">
+<link rel="stylesheet" href="becher.css">
+</head>
+<body>
+
+  <!-- Tisch aufstellen -->
+  <div class="tu-overlay" id="aufbau" data-nui-root hidden>
+    <section class="tu-window bs-aufbau" role="dialog" aria-labelledby="aufbau-titel">
+      <header class="tu-header">
+        <div class="tu-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 4h10l2.5 15h-15z"/><path d="M3.5 19h17"/></svg>
+        </div>
+        <div class="tu-heading">
+          <h1 class="tu-title" id="aufbau-titel">Becherspiel</h1>
+          <span class="bs-unter">Tisch aufstellen</span>
+        </div>
+        <button class="tu-close" type="button" aria-label="Schließen" onclick="Nui.close()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="tu-body">
+        <span class="tu-label">Schwierigkeit</span>
+        <div class="bs-stufen" id="stufen"></div>
+
+        <label class="bs-schalter" id="zinken-zeile">
+          <input type="checkbox" id="zinken">
+          <span class="bs-knopf" aria-hidden="true"></span>
+          <span>
+            <b>Gezinkter Tisch</b>
+            <small>Nach den Wetten bestimmst du, unter welchem Becher die Kugel liegt. Die Spieler sehen das nicht.</small>
+          </span>
+        </label>
+
+        <p class="bs-tipp">Danach stellst du den Tisch auf: Mausrad oder <kbd>←</kbd> <kbd>→</kbd> drehen, <kbd>E</kbd> aufstellen. Gespielt wird von der Seite mit dem grünen Kreis.</p>
+
+        <div class="bs-knoepfe">
+          <button class="tu-btn" type="button" onclick="Nui.close()">Abbrechen</button>
+          <button class="tu-btn is-primary" type="button" id="aufstellen">Tisch aufstellen</button>
+        </div>
+        <p class="bs-credit">toter-becherspiel · © toter</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Am Tisch -->
+  <div id="tisch" data-nui-root hidden>
+    <aside class="bs-leute" id="leute" hidden>
+      <div class="bs-leute-kopf">Am Tisch <span id="leute-zahl">0</span></div>
+      <ul class="tu-list" id="leute-liste"></ul>
+    </aside>
+
+    <section class="bs-spiel" id="spiel">
+      <div class="bs-kopf">
+        <div>
+          <div class="bs-titel" id="tisch-titel">Becherspiel</div>
+          <div class="bs-unter" id="tisch-info"></div>
+        </div>
+        <div class="bs-zeit" id="zeit" hidden></div>
+        <button class="tu-close" type="button" aria-label="Schließen" onclick="Nui.close()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <div class="bs-buehne" id="buehne">
+        <div class="bs-matte"></div>
+        <div class="bs-gesetzt" data-platz="1"></div>
+        <div class="bs-gesetzt" data-platz="2"></div>
+        <div class="bs-gesetzt" data-platz="3"></div>
+        <div class="bs-becher" data-id="1"><span class="bs-kugel"></span><i></i><b class="bs-nummer"></b></div>
+        <div class="bs-becher" data-id="2"><span class="bs-kugel"></span><i></i><b class="bs-nummer"></b></div>
+        <div class="bs-becher" data-id="3"><span class="bs-kugel"></span><i></i><b class="bs-nummer"></b></div>
+
+      </div>
+
+      <p class="bs-status" id="status">Warte auf die nächste Runde.</p>
+
+      <div class="bs-ergebnis" id="ergebnis" hidden>
+        <div class="bs-ergebnis-titel" id="ergebnis-titel"></div>
+        <ul class="bs-ergebnis-liste" id="ergebnis-liste"></ul>
+      </div>
+
+      <div class="bs-wette" id="wette" hidden>
+        <div class="bs-einsatz">
+          <input class="tu-input" type="number" id="betrag" inputmode="numeric" placeholder="Einsatz">
+          <div class="bs-chips" id="chips"></div>
+        </div>
+        <button class="tu-btn is-primary" type="button" id="setzen" disabled>Setzen</button>
+      </div>
+
+      <div class="bs-host" id="host" hidden>
+        <div class="bs-einsatz-wahl">
+          <span class="tu-label">Einsatz</span>
+          <div class="bs-umschalter" id="einsatz-art">
+            <button class="bs-stufe is-active" type="button" data-art="mindestens">Mindestens</button>
+            <button class="bs-stufe" type="button" data-art="fest">Fest</button>
+          </div>
+          <input class="tu-input" type="number" id="fest-betrag" inputmode="numeric" placeholder="Betrag">
+        </div>
+        <button class="tu-btn is-primary" type="button" id="starten">Runde starten</button>
+        <button class="tu-btn" type="button" id="stoppen" hidden>Stoppen, Einsätze zurück</button>
+        <button class="tu-btn is-danger" type="button" id="abbauen">Tisch abbauen</button>
+      </div>
+
+      <p class="bs-fuss" id="fuss"></p>
+      <p class="bs-credit">toter-becherspiel · © toter</p>
+    </section>
+
+    <div class="bs-kamera" id="kamera-hinweis" hidden></div>
+
+    <!-- Gezinkt: Host wählt den Becher -->
+    <div class="tu-overlay bs-zinken-hg" id="zinken-fenster" hidden>
+      <section class="tu-window bs-zinken">
+        <header class="tu-header">
+          <div class="tu-heading">
+            <h2 class="tu-title">Wo liegt die Kugel?</h2>
+            <span class="bs-unter">Ehrlich wäre Becher <b id="ehrlich"></b> · <span id="zinken-zeit"></span></span>
+          </div>
+        </header>
+        <div class="tu-body">
+          <ul class="tu-list bs-einsaetze" id="einsaetze"></ul>
+          <div class="bs-wahl" id="wahl"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="nui.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
